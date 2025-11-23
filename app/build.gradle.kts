@@ -37,11 +37,10 @@ val appVerCode: Int by lazy {
     versionCode.toInt()
 }
 val buildNum: String get() = SimpleDateFormat("MMddHH", Locale.ENGLISH).format(Date())
-val appVerName: String = "3.0.31"
+val appVerName: String = "3.0.32"
 val updateLog = """
     【问题修复】
-    - 修复 QQ 9.1.90+ 模块入口创建失败
-    - 修复 QQ 9.1.95+ 好友列表获取
+    - 修复 QQ 3.2.30 模块入口创建失败
 """.trimIndent()
 
 android {
