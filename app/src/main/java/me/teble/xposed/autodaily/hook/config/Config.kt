@@ -74,6 +74,9 @@ object Config {
         ),
         "Lcom/tencent/mobileqq/setting/processor/SimpleItemProcessor;" to setOf(
             "SimpleItemProcessor"
+        ),
+        "Lcom/tencent/mobileqq/startup/task/KernelInitTask;" to setOf(
+            "Uid is null, wait for complete"
         )
     )
     const val hooksVersion = 2

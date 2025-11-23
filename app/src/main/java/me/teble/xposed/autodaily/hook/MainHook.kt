@@ -232,7 +232,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
             // ignore
         }
         // for NT QQ
-        val cKernelInitTask = cl.loadClass("com.tencent.mobileqq.startup.task.KernelInitTask")
+        val cKernelInitTask = load("Lcom/tencent/mobileqq/startup/task/KernelInitTask;")!!
         val method = cKernelInitTask.declaredMethods.first {
             it.returnType == Void.TYPE &&
                 it.parameterTypes.size == 1 && it.parameterTypes[0] == Context::class.java
