@@ -71,6 +71,9 @@ object Config {
         ),
         "Lcom/tencent/qqnt/ntrelation/friendsinfo/bean/NTFriendSimpleInfo;" to setOf(
             "^NTFriendSimpleInfo uin"
+        ),
+        "Lcom/tencent/mobileqq/setting/processor/SimpleItemProcessor;" to setOf(
+            "SimpleItemProcessor"
         )
     )
     const val hooksVersion = 2

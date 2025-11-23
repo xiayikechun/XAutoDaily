@@ -128,17 +128,21 @@ class QQSettingSettingActivityHook : BaseHook() {
 
         createEntry(oldEntry, false)
         createEntry(newEntry, true)
+
+        // 9.2.30 临时修复
+        val newObfEntry = load("com.tencent.mobileqq.setting.main.b")
+        createEntry(newObfEntry, true)
     }
 
     private fun createEntry(settingConfigProviderClass: Class<*>?, isNewSetting: Boolean) {
         settingConfigProviderClass ?: return
         try {
             val methods = settingConfigProviderClass.getMethods(false)
-            val cSimpleItemProcessor = methods.first {
+            val cSimpleItemProcessor = methods.firstOrNull {
                 LogUtil.d("param: ${it.parameterTypes.toList()}, ${it.returnType.name}")
                 it.parameterTypes.size == 1 && it.parameterTypes[0] == Context::class.java
                         && it.returnType.name.startsWith("com.tencent.mobileqq.setting.processor")
-            }.returnType
+            }?.returnType ?: load("Lcom/tencent/mobileqq/setting/processor/SimpleItemProcessor;")!!
             val cSimpleItemProcessorArgc = cSimpleItemProcessor.constructors.first {
                 it.parameterTypes.size < 6 && it.parameterTypes[0] == Context::class.java
                         && it.parameterTypes[1] == Int::class.java
