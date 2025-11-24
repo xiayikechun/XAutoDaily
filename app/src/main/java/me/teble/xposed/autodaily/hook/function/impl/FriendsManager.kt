@@ -46,32 +46,24 @@ open class FriendsManager : BaseFunction(
     }
 
     open fun getFriends(): List<Friend>? {
-        val map = getFriendsMap(friendsManager)
-        val friendsList = LinkedList<Friend>()
+        val friends = getFriendsMap(friendsManager)?.flatMap { it.value as ArrayList<*> }
+            ?: getFriendsList(friendsManager)
         val fNike = cFriends.field("name") ?: cFriends.field("nick")!!
         val fRemarke = cFriends.field("remark")!!
         val fUin = cFriends.field("uin")!!
-        map.entries.forEach {
-            val arr = it.value as ArrayList<*>
-            arr.forEach {
-                it?.let {
-                    friendsList.add(
-                        Friend(
-                            fUin.get(it) as String,
-                            fNike.get(it) as String,
-                            fRemarke.get(it) as String?
-                        )
-                    )
-                }
-            }
+        return friends.map {
+            Friend(
+                fUin.get(it) as String,
+                fNike.get(it) as String,
+                fRemarke.get(it) as String?
+            )
         }
-        return friendsList
     }
 
     private fun checkFriendsObj(manager: Any?): Boolean {
         if (manager == null) return false
         try {
-            val map = getFriendsMap(manager)
+            val map = getFriendsMap(manager)!!
             map.entries.forEach {
                 val arr = it.value as ArrayList<*>
                 arr.forEach {
@@ -85,9 +77,24 @@ open class FriendsManager : BaseFunction(
         }
         return checkFriendsArray(manager)
     }
+
+    // List<好友>
+    private fun getFriendsList(manager: Any): ArrayList<*> {
+        manager.getMethods().forEach {
+            if (Modifier.isPublic(it.modifiers)
+                && it.returnType == ArrayList::class.java
+                && it.parameterTypes.isEmpty()
+            ) {
+                return it.invoke(manager) as ArrayList<*>
+            }
+        }
+        LogUtil.d("getFriendsList failed")
+        return arrayListOf<Any>()
+    }
+
     // 高版本qq判断方式
     // Map<分组名, List<好友>>
-    private fun getFriendsMap(manager: Any): ConcurrentHashMap<*, *> {
+    private fun getFriendsMap(manager: Any): ConcurrentHashMap<*, *>? {
         manager.getMethods().forEach {
             if (Modifier.isPrivate(it.modifiers)
                 && it.returnType == ConcurrentHashMap::class.java
@@ -97,8 +104,10 @@ open class FriendsManager : BaseFunction(
                 return it.invoke(manager, true) as ConcurrentHashMap<*, *>
             }
         }
-        throw RuntimeException("获取好友信息失败")
+        LogUtil.d("try getFriendsMap failed")
+        return null
     }
+
     // 低版本QQ判断方式
     // ArrayList<好友>
     private fun checkFriendsArray(manager: Any): Boolean {
