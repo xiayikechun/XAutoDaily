@@ -1,6 +1,6 @@
 {
-    "versionName": "3.0.32",
-    "versionCode": 25112318,
-    "updateTime": "2025-11-23 18:36:17",
+    "versionName": "3.0.32-fix",
+    "versionCode": 25112409,
+    "updateTime": "2025-11-24 09:19:37",
     "updateLog": "【问题修复】\n- 修复 QQ 3.2.30 模块入口创建失败"
 }
