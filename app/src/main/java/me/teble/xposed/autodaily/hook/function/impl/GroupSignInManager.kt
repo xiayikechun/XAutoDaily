@@ -51,6 +51,7 @@ open class GroupSignInManager : BaseFunction(
                 }
             }
         }
+
         appInterface.getFields(false).forEach {
             if (cBaseService.isAssignableFrom(it.type)) {
                 LogUtil.d(it.name)
@@ -58,6 +59,17 @@ open class GroupSignInManager : BaseFunction(
                 mqqService = it.get(appInterface)!!
             }
         }
+        if (!this::mqqService.isInitialized) { // 9.2.70 修复
+            appInterface.getMethods(false).forEach {
+                if (it.returnType == cBaseService && it.isPublic
+                    && it.name == "getMobileQQService" && it.paramCount == 0) {
+                    LogUtil.d(it.toString())
+                    it.isAccessible = true
+                    mqqService = it.invoke(appInterface)!!
+                }
+            }
+        }
+
         if (!this::mRealHandlerReq.isInitialized) {
             throw RuntimeException("初始化失败 -> mRealHandlerReq")
         }
