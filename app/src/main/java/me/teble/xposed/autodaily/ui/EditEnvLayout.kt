@@ -43,6 +43,7 @@ import androidx.navigation.compose.rememberNavController
 import me.teble.xposed.autodaily.hook.function.proxy.FunctionPool
 import me.teble.xposed.autodaily.hook.utils.ToastUtil
 import me.teble.xposed.autodaily.task.model.Friend
+import me.teble.xposed.autodaily.task.model.GuildInfo
 import me.teble.xposed.autodaily.task.model.Task
 import me.teble.xposed.autodaily.task.model.TaskEnv
 import me.teble.xposed.autodaily.task.model.TroopInfo
@@ -80,8 +81,10 @@ fun EditEnvLayout(
     val envMap = remember { HashMap<String, MutableState<String>>() }
     var friends by remember { mutableStateOf(emptyList<Friend>()) }
     var troops by remember { mutableStateOf(emptyList<TroopInfo>()) }
+    var guilds by remember { mutableStateOf(emptyList<GuildInfo>()) }
     val friendFlag = remember { mutableStateOf(false) }
     val groupFlag = remember { mutableStateOf(false) }
+    val guildFlag = remember { mutableStateOf(false) }
     LaunchedEffect(envMap) {
         envList.forEach { env ->
             envMap[env.name] = mutableStateOf(
@@ -93,12 +96,19 @@ fun EditEnvLayout(
             if (env.type == "group") {
                 groupFlag.value = true
             }
+            if (env.type == "guild") {
+                guildFlag.value = true
+            }
         }
     }
     LaunchedEffect(friends) {
         if (friendFlag.value) {
             thread {
-                friends = FunctionPool.friendsManager.getFriends() ?: emptyList()
+                friends = runCatching {
+                    FunctionPool.friendsManager.getFriends()
+                }.onFailure {
+                    LogUtil.e(it, "获取好友列表失败")
+                }.getOrNull() ?: emptyList()
                 friendFlag.value = false
             }
         }
@@ -109,9 +119,21 @@ fun EditEnvLayout(
                 troops = runCatching {
                     FunctionPool.troopManager.getTroopInfoList()
                 }.onFailure {
-                    LogUtil.e(it, "获取群列表失败")
+                    LogUtil.e(it, "获取群组列表失败")
                 }.getOrNull() ?: emptyList()
                 groupFlag.value = false
+            }
+        }
+    }
+    LaunchedEffect(guildFlag) {
+        if (guildFlag.value) {
+            thread {
+                guilds = runCatching {
+                    FunctionPool.guildManager.getGuildInfoList()
+                }.onFailure {
+                    LogUtil.e(it, "获取频道列表失败")
+                }.getOrNull() ?: emptyList()
+                guildFlag.value = false
             }
         }
     }
@@ -139,10 +161,20 @@ fun EditEnvLayout(
                     onDismiss = { showDialog.value = false }
                 )
             }
+            "guild" -> {
+                GuildsCheckDialog(
+                    guilds = guilds,
+                    uinListStr = envMap[taskEnv.value?.name]!!,
+                    onConfirm = {
+                        showDialog.value = false
+                    },
+                    onDismiss = { showDialog.value = false }
+                )
+            }
         }
     }
     ActivityView(title = "${taskId}-变量编辑") {
-        Box(Modifier.fillMaxSize()){
+        Box(Modifier.fillMaxSize()) {
 
             LazyColumn(
                 modifier = Modifier
@@ -180,7 +212,18 @@ fun EditEnvLayout(
                                                     if (groupFlag.value) {
                                                         ToastUtil.send("群组列表正在获取中，请稍后重试")
                                                     } else {
-                                                        ToastUtil.send("群组列表为空/获取好友列表失败")
+                                                        ToastUtil.send("群组列表为空/获取群组列表失败")
+                                                    }
+                                                }
+                                            }
+                                            "guild" -> {
+                                                if (!guildFlag.value && guilds.isNotEmpty()) {
+                                                    showDialog.value = true
+                                                } else {
+                                                    if (guildFlag.value) {
+                                                        ToastUtil.send("频道列表正在获取中，请稍后重试")
+                                                    } else {
+                                                        ToastUtil.send("频道列表为空/获取频道列表失败")
                                                     }
                                                 }
                                             }
@@ -198,6 +241,9 @@ fun EditEnvLayout(
                                     if (env.type == "group") {
                                         append(" (点击打开群组列表)")
                                     }
+                                    if (env.type == "guild") {
+                                        append(" (点击打开频道列表)")
+                                    }
                                 },
                                 fontSize = 18.sp,
                                 modifier = Modifier.padding(8.dp)
@@ -214,7 +260,7 @@ fun EditEnvLayout(
                             OutlinedTextField(
                                 value = envMap[env.name]!!.value,
                                 onValueChange = {
-                                    if (env.limit >0) {
+                                    if (env.limit > 0) {
                                         when (env.type) {
                                             "string" -> {
                                                 limitErr = it.length > env.limit

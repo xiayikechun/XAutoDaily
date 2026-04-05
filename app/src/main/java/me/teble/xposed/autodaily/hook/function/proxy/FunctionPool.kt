@@ -7,6 +7,7 @@ import me.teble.xposed.autodaily.hook.function.base.BaseFunction
 import me.teble.xposed.autodaily.hook.function.impl.FavoriteManager
 import me.teble.xposed.autodaily.hook.function.impl.FriendsManager
 import me.teble.xposed.autodaily.hook.function.impl.GroupSignInManager
+import me.teble.xposed.autodaily.hook.function.impl.GuildManager
 import me.teble.xposed.autodaily.hook.function.impl.MiniLoginManager
 import me.teble.xposed.autodaily.hook.function.impl.MiniProfileManager
 import me.teble.xposed.autodaily.hook.function.impl.NtSendMessageManager
@@ -29,6 +30,7 @@ object FunctionPool {
         TicketManager::class.java,
         FriendsManager::class.java,
         TroopManager::class.java,
+        GuildManager::class.java,
         MiniLoginManager::class.java,
         NtSendMessageManager::class.java,
         SendMessageManager::class.java,
@@ -72,6 +74,8 @@ object FunctionPool {
     val friendsManager by lazy { getFunction(FriendsManager::class.java) }
 
     val troopManager by lazy { getFunction(TroopManager::class.java) }
+
+    val guildManager by lazy { getFunction(GuildManager::class.java) }
 
     val miniLoginManager by lazy { getFunction(MiniLoginManager::class.java) }
 

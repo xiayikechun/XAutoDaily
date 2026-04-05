@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import me.teble.xposed.autodaily.task.model.Friend
+import me.teble.xposed.autodaily.task.model.GuildInfo
 import me.teble.xposed.autodaily.task.model.TroopInfo
 
 @Composable
@@ -203,6 +204,114 @@ fun TroopsCheckDialog(
                                     checked = uinSelectMap[troop.uin]!!,
                                     onChange = {
                                         uinSelectMap[troop.uin]?.value = it
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    TextButton(onClick = {
+                        uinSelectMap.forEach { (_, mutableState) ->
+                            mutableState.value = true
+                        }
+                    }) {
+                        Text(text = "全选")
+                    }
+                    TextButton(onClick = {
+                        uinSelectMap.forEach { (_, mutableState) ->
+                            mutableState.value = !mutableState.value
+                        }
+                    }) {
+                        Text(text = "反选")
+                    }
+                    TextButton(onClick = onDismiss) {
+                        Text(text = "取消")
+                    }
+                    TextButton(onClick = {
+                        uinListStr.value = uinSelectMap
+                            .filter { it.value.value }
+                            .map { it.key }
+                            .joinToString(",")
+                        onConfirm()
+                    }) {
+                        Text(text = "确定")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GuildsCheckDialog(
+    guilds: List<GuildInfo>,
+    uinListStr: MutableState<String>,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+){
+    val keyword = remember { mutableStateOf<String?>(null) }
+    val guildUinSet = guilds.map { it.uin }.toSet()
+    val uinSelectMap = remember {
+        mutableMapOf<String, MutableState<Boolean>>().apply {
+            val uinSet = uinListStr.value.split(",").toSet()
+            guildUinSet.forEach {
+                put(it, mutableStateOf(uinSet.contains(it)))
+            }
+        }
+    }
+    Dialog(
+        onDismissRequest = onDismiss,
+    ) {
+        Surface(
+            shape = MaterialTheme.shapes.medium,
+            color = MaterialTheme.colors.surface,
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+
+                // TITLE
+                Text(
+                    text = "频道列表(${guilds.size})",
+                    color = Color.Black,
+                    fontSize = 23.sp,
+                    modifier = Modifier.padding(8.dp)
+                )
+                OutlinedTextField(
+                    value = keyword.value ?: "",
+                    onValueChange = {
+                        if (it.isEmpty()) {
+                            keyword.value = null
+                        } else {
+                            keyword.value = it
+                        }
+                    },
+                    label = { Text(text = "关键词") }
+                )
+                LineSpacer()
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(weight = 1f, fill = false)
+                        .padding(vertical = 16.dp)
+                ) {
+                    guilds.forEach { guild ->
+                        val show = mutableStateOf(true)
+                        keyword.value?.let {
+                            show.value = guild.uin.contains(it)
+                                    || guild.name.lowercase().contains(it)
+                        }
+                        if (keyword.value == null) {
+                            show.value = true
+                        }
+                        if (show.value) {
+                            item {
+                                LineCheckBox(
+                                    title = guild.name,
+                                    desc = guild.uin,
+                                    checked = uinSelectMap[guild.uin]!!,
+                                    onChange = {
+                                        uinSelectMap[guild.uin]?.value = it
                                     }
                                 )
                             }

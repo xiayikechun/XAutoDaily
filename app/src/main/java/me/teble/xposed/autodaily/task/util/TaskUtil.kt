@@ -286,7 +286,7 @@ object TaskUtil {
                     env[it.name] = RandomEnv((confValue ?: defaultValue).split("|"))
                 }
 
-                "list", "friend", "group" -> {
+                "list", "friend", "group", "guild" -> {
                     val value = confValue ?: defaultValue
                     env[it.name] = value.split(",").toMutableList()
                 }

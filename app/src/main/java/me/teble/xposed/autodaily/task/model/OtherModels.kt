@@ -10,6 +10,12 @@ data class TroopInfo(
 )
 
 @Serializable
+data class GuildInfo(
+    val name: String,
+    val uin: String,
+)
+
+@Serializable
 data class VoterInfo(
     // qq
     val uin: Long,
