@@ -11,8 +11,8 @@ data class TroopInfo(
 
 @Serializable
 data class GuildInfo(
-    val name: String,
     val uin: String,
+    val name: String,
 )
 
 @Serializable
