@@ -90,7 +90,7 @@ fun FriendsCheckDialog(
                         if (show.value) {
                             item {
                                 LineCheckBox(
-                                    title = friend.remark ?: friend.nike,
+                                    title = friend.remark?.takeIf { it.isNotBlank() } ?: friend.nike,
                                     desc = friend.uin,
                                     checked = uinSelectMap[friend.uin]!!,
                                     onChange = {
