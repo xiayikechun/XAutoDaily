@@ -37,10 +37,14 @@ val appVerCode: Int by lazy {
     versionCode.toInt()
 }
 val buildNum: String get() = SimpleDateFormat("MMddHH", Locale.ENGLISH).format(Date())
-val appVerName: String = "3.0.33"
+val appVerName: String = "3.0.34"
 val updateLog = """
+    【功能】
+    - 新增 频道签到
+    【体验】
+    - 适配 新版配置
     【问题修复】
-    - 修复 QQ 9.2.70 获取 mqqService
+    - 修复 好友弹窗UI
 """.trimIndent()
 
 android {
