@@ -1,6 +1,6 @@
 {
-    "versionName": "3.0.33",
-    "versionCode": 26031115,
-    "updateTime": "2026-03-11 15:13:53",
-    "updateLog": "【问题修复】\n- 修复 QQ 9.2.70 获取 mqqService"
+    "versionName": "3.0.34",
+    "versionCode": 26040701,
+    "updateTime": "2026-04-07 01:04:49",
+    "updateLog": "【功能】\n- 新增 频道签到\n【体验】\n- 适配 新版配置\n【问题修复】\n- 修复 好友弹窗UI"
 }
