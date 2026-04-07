@@ -37,14 +37,12 @@ val appVerCode: Int by lazy {
     versionCode.toInt()
 }
 val buildNum: String get() = SimpleDateFormat("MMddHH", Locale.ENGLISH).format(Date())
-val appVerName: String = "3.0.34"
+val appVerName: String = "3.0.35"
 val updateLog = """
-    【功能】
-    - 新增 频道签到
-    【体验】
-    - 适配 新版配置
-    【问题修复】
-    - 修复 好友弹窗UI
+【功能】
+- 新增 王者营地每日任务
+- 新增 福利社领卷
+- 新增 QQ运动步数
 """.trimIndent()
 
 android {
