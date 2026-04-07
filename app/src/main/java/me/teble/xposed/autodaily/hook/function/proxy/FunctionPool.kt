@@ -15,6 +15,7 @@ import me.teble.xposed.autodaily.hook.function.impl.PublicAccountManager
 import me.teble.xposed.autodaily.hook.function.impl.SendMessageManager
 import me.teble.xposed.autodaily.hook.function.impl.TicketManager
 import me.teble.xposed.autodaily.hook.function.impl.TroopManager
+import me.teble.xposed.autodaily.hook.function.impl.YunDongStepsManager
 import me.teble.xposed.autodaily.hook.utils.QApplicationUtil
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.android.AndroidClassLoadingStrategy
@@ -37,6 +38,7 @@ object FunctionPool {
         GroupSignInManager::class.java,
         MiniProfileManager::class.java,
         PublicAccountManager::class.java,
+        YunDongStepsManager::class.java,
     )
 
     private val functionMap = HashMap<Class<out BaseFunction>, BaseFunction>().let {
@@ -92,4 +94,6 @@ object FunctionPool {
     val miniProfileManager by lazy { getFunction(MiniProfileManager::class.java) }
 
     val publicAccountManager by lazy { getFunction(PublicAccountManager::class.java) }
+
+    val yunDongStepsManager by lazy { getFunction(YunDongStepsManager::class.java) }
 }

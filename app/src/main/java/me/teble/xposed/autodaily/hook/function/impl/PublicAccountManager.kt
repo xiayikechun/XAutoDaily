@@ -1,6 +1,7 @@
 package me.teble.xposed.autodaily.hook.function.impl
 
 import com.tencent.mobileqq.mp.mobileqq_mp
+import me.teble.xposed.autodaily.config.MsfService
 import me.teble.xposed.autodaily.config.StQWebReq
 import me.teble.xposed.autodaily.hook.base.load
 import me.teble.xposed.autodaily.hook.function.base.BaseFunction
@@ -33,7 +34,7 @@ open class PublicAccountManager : BaseFunction(
             menu_type.set(0)
         }
         val sendData = ServletUtil.encodeReq(-1, request.toByteArray())
-        val packet = Packet::class.java.new(currentUin.toString()).apply {
+        val packet = Packet::class.java.new("$currentUin").apply {
             setSSOCommand("CertifiedAccountSvc.certified_account_write.SendMenuEvent")
             putSendData(WupUtil.encode(sendData))
             setTimeout(9999L)
@@ -41,7 +42,7 @@ open class PublicAccountManager : BaseFunction(
         val toServiceMsg = packet.toMsg().apply {
             appId = 537064392
             appSeq = 23333333
-            serviceName = "com.tencent.mobileqq.msf.service.MsfService"
+            serviceName = MsfService
         }
         QApplicationUtil.send(toServiceMsg)
     }
