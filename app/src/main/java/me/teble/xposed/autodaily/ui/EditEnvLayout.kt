@@ -67,7 +67,7 @@ fun EditEnvLayout(
             if (taskGroup.id == groupId) {
                 taskGroup.tasks.forEach {
                     if (it.id == taskId) {
-                        envList = it.envs ?: emptyList()
+                        envList = (it.envs ?: emptyList()).filter { env -> env.isEditable }
                         task = it
                         return@LaunchedEffect
                     }

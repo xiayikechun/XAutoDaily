@@ -80,7 +80,7 @@ data class Task(
 data class TaskEnv(
     // 变量名
     val name: String,
-    // 类型 string, list(,分割), friend(唤醒勾选好友，本质也是list), group（同理）
+    // 类型 string, num, const(常量，使用default值), list(,分割), friend(唤醒勾选好友，本质也是list), group（同理）
     val type: String,
     // 最大限制，string类型对应长度，list对应列表长度，为0表示没有限制
     val limit: Int,
@@ -88,7 +88,10 @@ data class TaskEnv(
     val default: String,
     // 变量描述
     val desc: String,
-)
+) {
+    val isConst = type == "const"
+    val isEditable = !isConst
+}
 @Serializable
 data class TaskCallback(
     // 响应的data提取正则，如果为null，则表示不需要处理

@@ -266,7 +266,7 @@ object TaskUtil {
         task.envs?.forEach {
             val confValue = getConfEnv(task.id, it.name)
             // 变量默认值为空表示强制要求用户填写，否则抛出异常
-            if (it.default.isEmpty()) {
+            if (!it.isConst && it.default.isEmpty()) {
                 if (confValue.isNullOrEmpty()) {
                     ToastUtil.send("任务【${task.id}】的变量${it.name}不能为空", true)
                     throw RuntimeException("任务【${task.id}】的变量${it.name}不能为空")
@@ -274,6 +274,10 @@ object TaskUtil {
             }
             val defaultValue = format(it.default, env)
             when (it.type) {
+                "const" -> {
+                    env[it.name] = defaultValue
+                }
+
                 "num" -> {
                     env[it.name] = confValue ?: defaultValue
                 }
