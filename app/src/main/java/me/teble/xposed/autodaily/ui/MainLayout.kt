@@ -256,26 +256,6 @@ fun MainLayout(navController: NavHostController) {
                     modifier = Modifier.padding(vertical = 8.dp),
                 )
             }
-            item {
-                LineButton(
-                    title = "请作者吃辣条",
-                    desc = "本模块完全免费开源，一切开发旨在学习，请勿用于非法用途。喜欢本模块的可以捐赠支持我，谢谢~~",
-                    onClick = {
-                        ToastUtil.send("正在跳转，请稍后")
-                        val context = navController.context
-                        try {
-                            context.openUrl(
-                                "alipayqr://platformapi/startapp?saId=10000007&clientVersion=" +
-                                    "3.7.0.0718&qrcode=https%3A%2F%2Fqr.alipay.com%2F$ALIPAY_QRCODE%3F_s%3Dweb-other"
-                            )
-                        } catch (e: Exception) {
-                            LogUtil.e(e, "open alipay qr error: ")
-                            context.openUrl("https://mobilecodec.alipay.com/client_download.htm?qrcode=$ALIPAY_QRCODE")
-                        }
-                    },
-                    modifier = Modifier.padding(vertical = 8.dp),
-                )
-            }
         }
     }
 }
