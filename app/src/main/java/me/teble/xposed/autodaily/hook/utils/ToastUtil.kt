@@ -1,19 +1,11 @@
 package me.teble.xposed.autodaily.hook.utils
 
-import android.R
 import android.content.Context
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import me.teble.xposed.autodaily.config.NAME
 import me.teble.xposed.autodaily.hook.base.hostContext
-import java.util.Locale
-
 
 object ToastUtil {
 

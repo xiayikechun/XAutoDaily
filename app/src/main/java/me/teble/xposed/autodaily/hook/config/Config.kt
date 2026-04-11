@@ -77,6 +77,12 @@ object Config {
         ),
         "Lcom/tencent/mobileqq/startup/task/KernelInitTask;" to setOf(
             "Uid is null, wait for complete"
+        ),
+        "Lcom/qzone/reborn/intimate/part/QZoneIntimateSpaceCoverPart;" to setOf(
+            "QZoneIntimateSpaceCoverPartcheckIn"
+        ),
+        "Lcom/qzone/reborn/intimate/viewmodel/QZIntimateCheckInViewModel;" to setOf(
+            "QZIntimateCheckInViewModel", "[doCheckInRequest] space id is "
         )
     )
     const val hooksVersion = 2

@@ -74,6 +74,7 @@ class MainHook : IXposedHookLoadPackage, IXposedHookZygoteInit {
         JumpActivityHook::class.java,
         ToServiceMsgHook::class.java,
         BugHook::class.java,
+        QZoneIntimateSpaceHook::class.java,
     )
     private lateinit var mLoadPackageParam: LoadPackageParam
     private lateinit var mStartupParam: IXposedHookZygoteInit.StartupParam

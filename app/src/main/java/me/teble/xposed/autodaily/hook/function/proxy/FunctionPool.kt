@@ -12,6 +12,7 @@ import me.teble.xposed.autodaily.hook.function.impl.MiniLoginManager
 import me.teble.xposed.autodaily.hook.function.impl.MiniProfileManager
 import me.teble.xposed.autodaily.hook.function.impl.NtSendMessageManager
 import me.teble.xposed.autodaily.hook.function.impl.PublicAccountManager
+import me.teble.xposed.autodaily.hook.function.impl.QZIntimateSpaceManager
 import me.teble.xposed.autodaily.hook.function.impl.SendMessageManager
 import me.teble.xposed.autodaily.hook.function.impl.TicketManager
 import me.teble.xposed.autodaily.hook.function.impl.TroopManager
@@ -39,6 +40,7 @@ object FunctionPool {
         MiniProfileManager::class.java,
         PublicAccountManager::class.java,
         YunDongStepsManager::class.java,
+        QZIntimateSpaceManager::class.java,
     )
 
     private val functionMap = HashMap<Class<out BaseFunction>, BaseFunction>().let {
@@ -96,4 +98,6 @@ object FunctionPool {
     val publicAccountManager by lazy { getFunction(PublicAccountManager::class.java) }
 
     val yunDongStepsManager by lazy { getFunction(YunDongStepsManager::class.java) }
+
+    val qzIntimateSpaceManager by lazy { getFunction(QZIntimateSpaceManager::class.java) }
 }
