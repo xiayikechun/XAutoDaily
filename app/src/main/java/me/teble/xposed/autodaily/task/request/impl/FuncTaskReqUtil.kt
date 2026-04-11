@@ -4,6 +4,7 @@ import me.teble.xposed.autodaily.hook.function.base.BaseFunction
 import me.teble.xposed.autodaily.hook.function.proxy.FunctionPool.favoriteManager
 import me.teble.xposed.autodaily.hook.function.proxy.FunctionPool.groupSignInManager
 import me.teble.xposed.autodaily.hook.function.proxy.FunctionPool.publicAccountManager
+import me.teble.xposed.autodaily.hook.function.proxy.FunctionPool.qzIntimateSpaceManager
 import me.teble.xposed.autodaily.hook.function.proxy.FunctionPool.sendMessageManager
 import me.teble.xposed.autodaily.hook.function.proxy.FunctionPool.yunDongStepsManager
 import me.teble.xposed.autodaily.task.model.Task
@@ -91,6 +92,11 @@ object FuncTaskReqUtil : ITaskReqUtil {
                 val steps = paramMap["steps"]!!.toInt()
                 manager = yunDongStepsManager
                 yunDongStepsManager.reportSteps(steps)
+            }
+            url.startsWith("xa://QZIntimateSpaceManager/doCheckInRequest") -> {
+                val spaceId = paramMap["spaceId"]!!
+                manager = qzIntimateSpaceManager
+                qzIntimateSpaceManager.doCheckInRequest(spaceId)
             }
             else -> return TaskResponse(null, "不支持的功能", 500)
         }
