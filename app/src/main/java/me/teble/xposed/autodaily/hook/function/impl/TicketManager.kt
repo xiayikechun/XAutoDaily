@@ -51,8 +51,10 @@ open class TicketManager : BaseFunction(
 
     private val ticketManagerMap = mutableMapOf<String, TicketManager>()
     private val uin: String get() = "${QApplicationUtil.currentUin}"
+
     // 9.1.55 彻底砍掉了 getSuperKey，需要通过 "com.tencent.mobileqq.thirdsig.api.IThirdSigService" 获取
     private var thirdSigService: Any? = null
+    private var pskeyManager: Any? = null
 
     override fun init() {
         getTicketManager()
@@ -60,6 +62,8 @@ open class TicketManager : BaseFunction(
             thirdSigService = QApplicationUtil.appRuntime
                 .getRuntimeService(loadAs("com.tencent.mobileqq.thirdsig.api.IThirdSigService"), "all")
         }
+        pskeyManager = QApplicationUtil.appRuntime
+            .getRuntimeService(loadAs("com.tencent.mobileqq.pskey.api.IPskeyManager"), "all")
     }
 
     private fun getTicketManager(): TicketManager {
@@ -108,7 +112,8 @@ open class TicketManager : BaseFunction(
                 getSuperKeyMethod.invoke(service, QApplicationUtil.currentUin, 16, callback)
 
                 countDownLatch.await(15000L, TimeUnit.MILLISECONDS)
-            } catch (_: InterruptedException) {}
+            } catch (_: InterruptedException) {
+            }
             return superKey
         }
         return getTicketManager().getSuperkey(uin)
@@ -119,6 +124,37 @@ open class TicketManager : BaseFunction(
     }
 
     open fun getPskey(domain: String): String? {
+        pskeyManager?.let { manager ->
+            LogUtil.d("getPskey use pskeyManager: ${manager.javaClass}")
+            val countDownLatch = CountDownLatch(1)
+            var psKey: String? = null
+            try {
+                val getPskeyMethod = manager.getMethods(false).first {
+                    it.name == "getPskey"
+                }
+                val callbackClass = getPskeyMethod.parameterTypes.last()
+
+                val callback = Proxy.newProxyInstance(hostClassLoader, arrayOf(callbackClass)) { _, method, args ->
+                    runCatching {
+                        if (args.size == 2) { // onFail
+                            LogUtil.d("getPskey fail, code: ${args[0]}, msg: ${args[1]}")
+                        } else { // onSuccess
+                            val map = args[0] as Map<String, String>
+                            psKey = map[domain]
+                            LogUtil.d("getPskey success: $psKey")
+                        }
+                        countDownLatch.countDown()
+                    }.onFailure {
+                        LogUtil.e(it, "new getPskey")
+                    }
+                }
+                getPskeyMethod.invoke(manager, arrayOf(domain), callback)
+
+                countDownLatch.await(15000L, TimeUnit.MILLISECONDS)
+            } catch (_: InterruptedException) {
+            }
+            return psKey
+        }
         return getTicketManager().getPskey(uin, domain)
     }
 
